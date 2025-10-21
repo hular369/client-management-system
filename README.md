@@ -151,7 +151,7 @@ NOTE: do not forget to assign correct values for DB_USERNAME, DB_PASSWORD and al
 
 
 
-# Run tests
+Run tests
 ```bash
 # Run all tests
 php artisan test
