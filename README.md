@@ -150,8 +150,6 @@ MAIL_MAILER=array
 NOTE: do not forget to assign correct values for DB_USERNAME, DB_PASSWORD and also make sure to put an application key for APP_KEY.
 
 
-
-Run tests
 ```bash
 # Run all tests
 php artisan test
