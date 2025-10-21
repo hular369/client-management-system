@@ -1,0 +1,172 @@
+{
+  "base_url": "http://localhost:8000/api/clients",
+  "endpoints": [
+    {
+      "name": "Get All Clients",
+      "method": "GET",
+      "path": "/",
+      "description": "Retrieves a paginated list of all clients with optional filtering and search.",
+      "query_parameters": {
+        "page": "Page number (default: 1)",
+        "per_page": "Items per page (default: 15)",
+        "search": "Search term for name/email/phone",
+        "sort": "Field to sort by (name, email, created_at)",
+        "order": "Sort order (asc, desc)"
+      },
+      "response_example": {
+        "data": [
+          {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@example.com",
+            "phone": "+1234567890",
+            "address": "123 Main St, City, Country",
+            "created_at": "2024-01-15T10:30:00.000000Z",
+            "updated_at": "2024-01-15T10:30:00.000000Z"
+          }
+        ],
+        "current_page": 1,
+        "per_page": 15,
+        "total": 75,
+        "last_page": 5
+      }
+    },
+    {
+      "name": "Delete Client",
+      "method": "DELETE",
+      "path": "/{id}",
+      "description": "Deletes a specific client by ID.",
+      "parameters": {
+        "id": "Client ID (URL parameter, required)"
+      },
+      "response_example": {
+        "message": "Client deleted successfully",
+        "deleted_id": 1
+      }
+    },
+    {
+      "name": "Start CSV Import",
+      "method": "POST",
+      "path": "/import",
+      "description": "Starts a background CSV import process. The file is processed asynchronously via queue.",
+      "request_body": {
+        "file": "CSV file (multipart/form-data, required)",
+        "headers": "Boolean indicating if CSV has header row (optional)"
+      },
+      "csv_format_expected": "name,email,phone,address",
+      "response_example": {
+        "message": "CSV import started successfully",
+        "session_id": "session_abc123",
+        "filename": "clients.csv",
+        "total_rows": 150
+      }
+    },
+    {
+      "name": "Get Import Progress",
+      "method": "GET",
+      "path": "/import-progress",
+      "description": "Gets the current status and progress of ongoing import operations.",
+      "query_parameters": {
+        "session_id": "Specific session ID to check (optional)"
+      },
+      "response_example": {
+        "progress": [
+          {
+            "session_id": "session_abc123",
+            "filename": "clients.csv",
+            "status": "processing",
+            "processed_rows": 75,
+            "total_rows": 150,
+            "progress_percentage": 50,
+            "duplicates_found": 3,
+            "started_at": "2024-01-15T10:00:00Z",
+            "estimated_completion": "2024-01-15T10:02:30Z"
+          }
+        ],
+        "active_imports": 1
+      }
+    },
+    {
+      "name": "Cancel Import",
+      "method": "POST",
+      "path": "/cancel-import",
+      "description": "Cancels an ongoing import process.",
+      "request_body": {
+        "session_id": "session_abc123"
+      },
+      "response_example": {
+        "message": "Import cancelled successfully",
+        "cancelled_session": "session_abc123"
+      }
+    },
+    {
+      "name": "Export Clients",
+      "method": "GET",
+      "path": "/export",
+      "description": "Exports clients data to CSV format.",
+      "query_parameters": {
+        "format": "Export format (csv, xlsx - defaults to csv)",
+        "include_headers": "Include column headers (default: true)",
+        "filters": "JSON string of filters to apply"
+      },
+      "response_example": "Returns a CSV file with columns: id,name,email,phone,imported_at"
+    },
+    {
+      "name": "Get Duplicate Groups",
+      "method": "GET",
+      "path": "/duplicate-groups",
+      "description": "Retrieves groups of potential duplicate clients based on matching criteria (email, phone, or similar names).",
+      "query_parameters": {
+        "threshold": "Similarity threshold (0-100, default: 80)",
+        "field": "Field to check duplicates on (email, phone, name, all)"
+      },
+      "response_example": {
+        "duplicate_groups": [
+          {
+            "group_id": "group_1",
+            "matching_field": "email",
+            "matching_value": "john@example.com",
+            "clients": [
+              {
+                "id": 1,
+                "name": "John Doe",
+                "email": "john@example.com",
+                "phone": "+1234567890",
+                "address": "123 Main St",
+                "similarity_score": 100
+              },
+              {
+                "id": 5,
+                "name": "Johnny Doe",
+                "email": "john@example.com",
+                "phone": "+1987654321",
+                "address": "456 Oak Ave",
+                "similarity_score": 100
+              }
+            ]
+          }
+        ],
+        "total_duplicate_groups": 5,
+        "total_duplicate_clients": 12
+      }
+    }
+  ],
+  "error_responses": {
+    "validation_error_422": {
+      "message": "The given data was invalid.",
+      "errors": {
+        "file": ["The file field is required."],
+        "email": ["The email must be a valid email address."]
+      }
+    },
+    "not_found_404": {
+      "message": "Client not found",
+      "error": true
+    },
+    "import_error_500": {
+      "message": "Import processing failed",
+      "error": "Invalid CSV format",
+      "session_id": "session_abc123"
+    }
+  }
+}
