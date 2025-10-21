@@ -59,7 +59,67 @@ This is a robust, production-ready Laravel + React application for managing clie
 
 ## 🚀 Installation
 
-### 1. Clone the Repository
+### 1. Clone the Repository and install dependencies
 ```bash
 git clone https://github.com/hular369/client-management-system.git
 cd client_management_system
+
+# Install PHP dependencies
+composer install
+
+# Copy environment file
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+
+# Install Node.js dependencies
+npm install
+
+# Build frontend assets
+npm run build
+
+Update the .env file with specific Database and Queue configurations:
+# Database Configuration
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=client_management
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+
+# Queue Configuration (for production)
+QUEUE_CONNECTION=database
+
+
+### 2. Run migrtions:
+
+# Create database tables
+php artisan migrate
+
+# Run seeders for sample data
+php artisan db:seed
+
+
+### 3. Optionally, you can also create sample data:
+
+# Seed clients with duplicates for testing
+php artisan db:seed --class=ClientSeeder
+
+# Seed import sessions with various statuses
+php artisan db:seed --class=ImportSessionSeeder
+
+# Copy sample CSV files to storage
+php artisan db:seed --class=SampleFilesSeeder
+
+
+### 3. Run the application for test/dev mode:
+
+# Terminal 1 - Start Laravel development server
+php artisan serve
+
+# Terminal 2 - Start frontend development server (optional)
+npm run dev
+
+# Terminal 3 - Start queue worker for background processing
+php artisan queue:work
