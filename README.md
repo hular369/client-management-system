@@ -120,17 +120,38 @@ php artisan db:seed --class=ClientSeeder
 php artisan db:seed --class=ImportSessionSeeder
 php artisan db:seed --class=SampleFilesSeeder
 
+```
 
 🧪 Running Tests:
+
+Create a database named `client_management_test` (A separate test db is used for running tests)
+then, update the file .env.testing with the specific configs as:
+
+```bash
+APP_ENV=testing
+APP_DEBUG=true
+APP_KEY=base64:test-key-for-testing-environment
+
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=client_management_test
+DB_USERNAME=<DB_USER_NAME>
+DB_PASSWORD=<PASSWORD>
+
+CACHE_DRIVER=array
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=array
+MAIL_MAILER=array
+
+NOTE: do not forget to assign correct values for DB_USERNAME, DB_PASSWORD and also make sure to put an application key for APP_KEY.
 
 # Run all tests
 php artisan test
 
 # Run specific test
 php artisan test tests/Feature/ClientImportTest.php
-
-# Run with coverage
-php artisan test --coverage
 
 ```
 

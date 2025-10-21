@@ -68,8 +68,8 @@ class ClientService
         if (isset($filters['search']) && $filters['search']) {
             $query->where(function ($q) use ($filters) {
                 $q->where('company_name', 'like', "%{$filters['search']}%")
-                  ->orWhere('email', 'like', "%{$filters['search']}%")
-                  ->orWhere('phone_number', 'like', "%{$filters['search']}%");
+                    ->orWhere('email', 'like', "%{$filters['search']}%")
+                    ->orWhere('phone_number', 'like', "%{$filters['search']}%");
             });
         }
 
@@ -113,7 +113,7 @@ class ClientService
         // If this is a duplicate, mark all records in this group as duplicates
         if ($isDuplicate) {
             Client::where('duplicate_group_hash', $duplicateHash)
-                  ->update(['is_duplicate' => true]);
+                ->update(['is_duplicate' => true]);
         }
 
         return $client;
@@ -125,17 +125,17 @@ class ClientService
     public function deleteClient(int $clientId): bool
     {
         $client = Client::findOrFail($clientId);
-        
+
         // If this was the last duplicate in a group, update the group status
         if ($client->is_duplicate) {
             $remainingDuplicates = Client::where('duplicate_group_hash', $client->duplicate_group_hash)
-                                       ->where('id', '!=', $clientId)
-                                       ->count();
-            
+                ->where('id', '!=', $clientId)
+                ->count();
+
             if ($remainingDuplicates === 1) {
                 // Only one duplicate remains, mark it as unique
                 Client::where('duplicate_group_hash', $client->duplicate_group_hash)
-                      ->update(['is_duplicate' => false]);
+                    ->update(['is_duplicate' => false]);
             }
         }
 
@@ -152,11 +152,11 @@ class ClientService
             ->selectRaw('COUNT(*) as duplicate_count')
             ->groupBy('duplicate_group_hash')
             ->having('duplicate_count', '>', 1)
-            ->with(['clients' => function($query) {
+            ->with(['clients' => function ($query) {
                 $query->select('id', 'company_name', 'email', 'phone_number', 'duplicate_group_hash');
             }])
             ->get()
-            ->map(function($group) {
+            ->map(function ($group) {
                 return [
                     'hash' => $group->duplicate_group_hash,
                     'count' => $group->duplicate_count,
@@ -170,15 +170,15 @@ class ClientService
      */
     public function formatForExport(Collection $clients): string
     {
-        $csvContent = "company_name,email,phone_number,is_duplicate,duplicate_group_hash\n";
-        
+        $csvContent = "company_name,email,phone_number,imported_at\n";
+
         foreach ($clients as $client) {
             $csvContent .= implode(',', [
                 '"' . str_replace('"', '""', $client->company_name) . '"',
                 '"' . str_replace('"', '""', $client->email) . '"',
                 '"' . str_replace('"', '""', $client->phone_number) . '"',
-                $client->is_duplicate ? 'true' : 'false',
-                '"' . $client->duplicate_group_hash . '"',
+                '"' . str_replace('"', '""', $client->created_at) . '"',
+
             ]) . "\n";
         }
 

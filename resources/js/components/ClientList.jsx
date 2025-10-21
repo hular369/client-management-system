@@ -23,7 +23,7 @@ const ClientList = () => {
                     filter: filter !== 'all' ? filter : undefined,
                 },
             });
-            setClients(response.data.data);
+            setClients(response.data);
         } catch (error) {
             console.error('Error fetching clients:', error);
         } finally {

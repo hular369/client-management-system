@@ -65,7 +65,7 @@ class ImportService
 
         $headers = $csv->getHeader();
         $requiredHeaders = ['company_name', 'email', 'phone_number'];
-        
+
         if (count(array_intersect($requiredHeaders, $headers)) !== count($requiredHeaders)) {
             Storage::disk('temp_imports')->delete($filePath);
             throw new \Exception('Invalid CSV format. Required columns: company_name, email, phone_number');
@@ -120,7 +120,7 @@ class ImportService
             return null;
         }
 
-        $progress = $session->total_rows > 0 ? 
+        $progress = $session->total_rows > 0 ?
             round(($session->processed_rows / $session->total_rows) * 100) : 0;
 
         return [

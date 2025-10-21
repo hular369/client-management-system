@@ -72,10 +72,10 @@ class ClientController extends Controller
     {
         try {
             $file = $request->file('csv_file');
-            
+
             // Use ImportService to handle file validation and storage
             $fileInfo = $this->importService->validateAndStoreCsv($file);
-            
+
             // Create import session
             $importSession = $this->importService->createImportSession(
                 $fileInfo['original_name'],
@@ -89,7 +89,7 @@ class ClientController extends Controller
             if ($fileInfo['total_rows'] === 0) {
                 $importSession->markAsCompleted();
                 $this->importService->cleanupFile($fileInfo['file_path']);
-                
+
                 return response()->json([
                     'success' => true,
                     'message' => 'CSV file processed - no data rows found',
@@ -104,7 +104,7 @@ class ClientController extends Controller
             // Process in chunks
             $chunkSize = 1000;
             $jobs = [];
-            
+
             for ($startRow = 0; $startRow < $fileInfo['total_rows']; $startRow += $chunkSize) {
                 $jobs[] = new ProcessClientImport($fileInfo['file_path'], $startRow, $chunkSize, $importSession->session_id);
             }
@@ -135,15 +135,14 @@ class ClientController extends Controller
                     'batch_id' => $batch->id,
                 ]
             ]);
-
         } catch (\Exception $e) {
             // Clean up file if error occurs
             if (isset($fileInfo['file_path'])) {
                 $this->importService->cleanupFile($fileInfo['file_path']);
             }
-            
+
             Log::error("Import failed: " . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Import failed: ' . $e->getMessage()
@@ -219,11 +218,21 @@ class ClientController extends Controller
 
             $clients = $this->clientService->getClients($filters);
 
-            return response()->json([
+            $response = [
                 'success' => true,
-                'data' => $clients
-            ]);
+                'data' => $clients->items(), // Just the client data
+                'meta' => [
+                    'current_page' => $clients->currentPage(),
+                    'from' => $clients->firstItem(),
+                    'to' => $clients->lastItem(),
+                    'total' => $clients->total(),
+                    'per_page' => $clients->perPage(),
+                    'last_page' => $clients->lastPage(),
+                    'links' => $clients->linkCollection()->toArray(),
+                ]
+            ];
 
+            return response()->json($response);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -271,7 +280,6 @@ class ClientController extends Controller
                     'count' => $clients->count(),
                 ]
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -292,7 +300,6 @@ class ClientController extends Controller
                 'success' => true,
                 'data' => $duplicateGroups
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -313,7 +320,6 @@ class ClientController extends Controller
                 'success' => true,
                 'message' => 'Client deleted successfully'
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
