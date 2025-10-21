@@ -166,10 +166,7 @@ Run the following commands in separate terminals:
 # Terminal 1 - Start Laravel server
 php artisan serve
 
-# Terminal 2 - Start frontend development server
-npm run dev
-
-# Terminal 3 - Start queue worker for background jobs
+# Terminal 2 - Start queue worker for background jobs
 php artisan queue:work
 
 ```
