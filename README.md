@@ -65,7 +65,7 @@ A **production-ready Laravel + React** application for managing client data with
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Installation, configurations, testing and running
 
 ### 1️⃣ Clone the Repository & Install Dependencies
 
@@ -88,10 +88,13 @@ npm install
 # Build frontend assets
 npm run build
 
+```
 
-2️⃣ Configure Environment
+
+### 2️⃣ Configure Environment
 
 Update your .env file with database and queue settings:
+```bash
 # Database Configuration
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -102,8 +105,10 @@ DB_PASSWORD=your_password
 
 # Queue Configuration (for production)
 QUEUE_CONNECTION=database
+```
 
-3️⃣ Run Migrations & Seeders
+### 3️⃣ Run Migrations & Seeders
+```bash
 # Create database tables
 php artisan migrate
 
@@ -127,10 +132,12 @@ php artisan test tests/Feature/ClientImportTest.php
 # Run with coverage
 php artisan test --coverage
 
+```
 
-💻 Development Usage
+### 💻 Development Usage
 
 Run the following commands in separate terminals:
+```bash
 # Terminal 1 - Start Laravel server
 php artisan serve
 
@@ -140,5 +147,6 @@ npm run dev
 # Terminal 3 - Start queue worker for background jobs
 php artisan queue:work
 
+```
 Access the application at:
 👉 http://localhost:8000
