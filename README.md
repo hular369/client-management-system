@@ -122,7 +122,7 @@ php artisan db:seed --class=SampleFilesSeeder
 
 ```
 
-🧪 Running Tests:
+### 🧪 Running Tests:
 
 Create a database named `client_management_test` (A separate test db is used for running tests)
 then, update the file .env.testing with the specific configs as:
@@ -144,10 +144,11 @@ CACHE_DRIVER=array
 QUEUE_CONNECTION=sync
 SESSION_DRIVER=array
 MAIL_MAILER=array
+```
+
 
 NOTE: do not forget to assign correct values for DB_USERNAME, DB_PASSWORD and also make sure to put an application key for APP_KEY.
 
-```
 
 
 # Run tests
