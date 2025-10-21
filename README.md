@@ -38,7 +38,6 @@ This is a robust, production-ready Laravel + React application for managing clie
 
 ### Architecture
 - **Service Classes** - Business logic separation
-- **Repository Pattern** - Data access abstraction
 - **Dependency Injection** - Loose coupling
 - **Queue Workers** - Asynchronous processing
 
@@ -62,5 +61,5 @@ This is a robust, production-ready Laravel + React application for managing clie
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/hular369/client-management-system.git
 cd client_management_system
