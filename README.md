@@ -1,6 +1,6 @@
 # Client Management System
 
-This is a robust, production-ready Laravel + React application for managing client data with advanced CSV import/export functionality, intelligent duplicate detection, and efficient batch processing.
+This is a production-ready Laravel + React application for managing client data with advanced CSV import/export functionality, intelligent duplicate detection, and efficient batch processing of large date files.
 
 ## 🚀 Features
 
@@ -113,7 +113,19 @@ php artisan db:seed --class=ImportSessionSeeder
 php artisan db:seed --class=SampleFilesSeeder
 
 
-### 3. Run the application for test/dev mode:
+🧪 Running Tests:
+
+# Run all tests:
+php artisan test
+
+# Run specific test file:
+php artisan test tests/Feature/ClientImportTest.php
+
+# Run with coverage:
+php artisan test --coverage
+
+
+### 4. Run the application for test/dev mode:
 
 # Terminal 1 - Start Laravel development server
 php artisan serve
@@ -123,3 +135,7 @@ npm run dev
 
 # Terminal 3 - Start queue worker for background processing
 php artisan queue:work
+
+bash```
+
+Finally browse at http://localhost:8000
