@@ -136,6 +136,5 @@ npm run dev
 # Terminal 3 - Start queue worker for background processing
 php artisan queue:work
 
-bash```
 
 Finally browse at http://localhost:8000
