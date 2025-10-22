@@ -66,7 +66,7 @@ A **production-ready Laravel + React** application for managing client data with
 --- 
 
 ### API documentation
-- api_doc.json file is in the root of the project, which can be studied to learn all about the API endpoints.
+- api_doc.json file is in the root of the project, which can be studied to learn about all the available API endpoints.
 
 ---
 
