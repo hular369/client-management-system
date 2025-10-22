@@ -1,5 +1,56 @@
 <?php
 
+/**
+ * ProcessClientImport
+ *
+ * Job that processes a chunk of a client CSV import.
+ *
+ * This queued job reads a portion of a CSV stored on the "temp_imports" disk and attempts to
+ * create clients via the injected ClientService. It is designed to run as part of a batch of
+ * chunked import jobs, supports early cancellation if the batch is cancelled, and records
+ * progress and errors to a central ImportSession model.
+ *
+ * Responsibilities:
+ * - Verify the import file exists on the "temp_imports" disk and open it with League\Csv\Reader.
+ * - Treat the first CSV row as headers (header offset 0).
+ * - Process rows beginning at $startRow and limit to $chunkSize using League\Csv\Statement.
+ * - For each row, call ClientService::createClient($record) and track:
+ *     - number of successfully imported clients,
+ *     - number of duplicates (as indicated by the created client),
+ *     - per-row exceptions collected as errors.
+ * - Update the associated ImportSession with processed_rows, imported_count, duplicate_count,
+ *   error_count and append any error messages.
+ * - Cache per-chunk results under a key like import_{session}_chunk_{startRow} for aggregation.
+ * - Log progress, missing files, and any exceptions encountered; when exceptions occur, update
+ *   the session with a chunk-level error entry.
+ *
+ * Class properties:
+ * @var string $filePath        Path (relative to the "temp_imports" disk) to the CSV file.
+ * @var int    $startRow       Zero-based start offset for rows this job should process.
+ * @var int    $chunkSize      Maximum number of rows to process in this job.
+ * @var string $importSessionId Identifier used to locate and update the ImportSession model.
+ *
+ * Important behavior and notes:
+ * - The job checks batch cancellation via $this->batch()->cancelled() and exits early if cancelled.
+ * - The row number reported in error messages accounts for CSV header and the start offset.
+ * - updateImportSession and updateImportSessionOnError are used to persist progress and failures.
+ * - Concurrency: updates to ImportSession are best-effort increments; if strict atomicity is
+ *   required under heavy parallelism, consider database-level locking or atomic increments.
+ * - Cached chunk results are stored for 1 hour (configurable) to allow aggregation after batch completion.
+ *
+ * Dependencies:
+ * - App\Services\ClientService for creating clients from CSV records.
+ * - App\Models\ImportSession for persisting import progress and errors.
+ * - League\Csv\Reader and League\Csv\Statement for CSV parsing and chunking.
+ *
+ * Usage:
+ * Dispatch the job with the CSV path, start row, chunk size and import session id. The job
+ * is serializable and suitable for queued execution in a Laravel queue/batch environment.
+ *
+ * @package App\Jobs
+ */
+
+
 namespace App\Jobs;
 
 use App\Models\ImportSession;
@@ -41,7 +92,6 @@ class ProcessClientImport implements ShouldQueue
 
         Log::info("Processing import chunk for session: {$this->importSessionId}, start row: {$this->startRow}");
 
-        // Use the temp_imports disk
         $fullPath = Storage::disk('temp_imports')->path($this->filePath);
 
         if (!file_exists($fullPath)) {
@@ -83,10 +133,9 @@ class ProcessClientImport implements ShouldQueue
                 }
             }
 
-            // CRITICAL FIX: Update the ImportSession with progress
+            // Update the ImportSession with progress
             $this->updateImportSession($imported, $duplicateCount, $errors);
 
-            // Store results in cache for aggregation (optional, for batch completion)
             $results = [
                 'imported' => $imported,
                 'errors' => $errors,
