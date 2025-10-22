@@ -16,19 +16,125 @@
       "response_example": {
         "data": [
           {
-            "id": 1,
-            "name": "John Doe",
-            "email": "john@example.com",
-            "phone": "+1234567890",
-            "address": "123 Main St, City, Country",
-            "created_at": "2024-01-15T10:30:00.000000Z",
-            "updated_at": "2024-01-15T10:30:00.000000Z"
+            "id": 2002,
+            "company_name": "Global Solutions",
+            "email": "infoglobalsolutions.com",
+            "phone_number": "9876543210",
+            "is_duplicate": false,
+            "duplicate_group_hash": "9478c65c7158183c9e73e1cf6353d837",
+            "created_at": "2025-10-22T03:51:17.000000Z",
+            "updated_at": "2025-10-22T03:51:17.000000Z"
+          },
+          {
+            "id": 2003,
+            "company_name": "Tech Corp",
+            "email": "contact@techcorp.com",
+            "phone_number": "1234567890",
+            "is_duplicate": false,
+            "duplicate_group_hash": "529dfd357a38f514596c66ecb09503e1",
+            "created_at": "2025-10-22T03:51:17.000000Z",
+            "updated_at": "2025-10-22T03:51:17.000000Z"
           }
         ],
-        "current_page": 1,
-        "per_page": 15,
-        "total": 75,
-        "last_page": 5
+        "meta": {
+          "current_page": 1,
+          "from": 1,
+          "to": 15,
+          "total": 2004,
+          "per_page": 15,
+          "last_page": 134,
+          "links": [
+            {
+              "url": null,
+              "label": "&laquo; Previous",
+              "page": null,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=1",
+              "label": "1",
+              "page": 1,
+              "active": true
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=2",
+              "label": "2",
+              "page": 2,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=3",
+              "label": "3",
+              "page": 3,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=4",
+              "label": "4",
+              "page": 4,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=5",
+              "label": "5",
+              "page": 5,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=6",
+              "label": "6",
+              "page": 6,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=7",
+              "label": "7",
+              "page": 7,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=8",
+              "label": "8",
+              "page": 8,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=9",
+              "label": "9",
+              "page": 9,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=10",
+              "label": "10",
+              "page": 10,
+              "active": false
+            },
+            {
+              "url": null,
+              "label": "...",
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=133",
+              "label": "133",
+              "page": 133,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=134",
+              "label": "134",
+              "page": 134,
+              "active": false
+            },
+            {
+              "url": "http:\/\/127.0.0.1:8000\/api\/clients?page=2",
+              "label": "Next &raquo;",
+              "page": 2,
+              "active": false
+            }
+          ]
+        }
       }
     },
     {
@@ -40,8 +146,7 @@
         "id": "Client ID (URL parameter, required)"
       },
       "response_example": {
-        "message": "Client deleted successfully",
-        "deleted_id": 1
+        "message": "Client deleted successfully"
       }
     },
     {
@@ -50,15 +155,16 @@
       "path": "/import",
       "description": "Starts a background CSV import process. The file is processed asynchronously via queue.",
       "request_body": {
-        "file": "CSV file (multipart/form-data, required)",
-        "headers": "Boolean indicating if CSV has header row (optional)"
+        "file": "CSV file (multipart/form-data, required)"
       },
       "csv_format_expected": "name,email,phone,address",
       "response_example": {
-        "message": "CSV import started successfully",
-        "session_id": "session_abc123",
-        "filename": "clients.csv",
-        "total_rows": 150
+        "message": "CSV import started in background",
+        "data": {
+          "session_id": "68f85ba7d33d5",
+          "total_rows": 6,
+          "batch_id": "a02bf6db-206f-4bc8-9115-970b2ff55fda"
+        }
       }
     },
     {
@@ -70,19 +176,16 @@
         "session_id": "Specific session ID to check (optional)"
       },
       "response_example": {
-        "progress": [
-          {
-            "session_id": "session_abc123",
-            "filename": "clients.csv",
-            "status": "processing",
-            "processed_rows": 75,
-            "total_rows": 150,
-            "progress_percentage": 50,
-            "duplicates_found": 3,
-            "started_at": "2024-01-15T10:00:00Z",
-            "estimated_completion": "2024-01-15T10:02:30Z"
-          }
-        ],
+        "data": {
+          "status": "processing",
+          "progress": 0,
+          "imported_count": 0,
+          "duplicate_count": 0,
+          "error_count": 0,
+          "total_rows": 6,
+          "processed_rows": 0,
+          "errors": []
+        },
         "active_imports": 1
       }
     },
@@ -105,9 +208,7 @@
       "path": "/export",
       "description": "Exports clients data to CSV format.",
       "query_parameters": {
-        "format": "Export format (csv, xlsx - defaults to csv)",
-        "include_headers": "Include column headers (default: true)",
-        "filters": "JSON string of filters to apply"
+        "filter": "Filter type: one of (all, unique, duplicate). Default: all"
       },
       "response_example": "Returns a CSV file with columns: id,name,email,phone,imported_at"
     },
@@ -116,38 +217,50 @@
       "method": "GET",
       "path": "/duplicate-groups",
       "description": "Retrieves groups of potential duplicate clients based on matching criteria (email, phone, or similar names).",
-      "query_parameters": {
-        "threshold": "Similarity threshold (0-100, default: 80)",
-        "field": "Field to check duplicates on (email, phone, name, all)"
-      },
+      "query_parameters": "None",
       "response_example": {
-        "duplicate_groups": [
+        "data": [
           {
-            "group_id": "group_1",
-            "matching_field": "email",
-            "matching_value": "john@example.com",
+            "hash": "00d239dcd929063fa22aaa3485de63b5",
+            "count": 2,
             "clients": [
               {
-                "id": 1,
-                "name": "John Doe",
-                "email": "john@example.com",
-                "phone": "+1234567890",
-                "address": "123 Main St",
-                "similarity_score": 100
+                "id": 363,
+                "company_name": "Company 362",
+                "email": "email362@test.com",
+                "phone_number": "123456780362",
+                "duplicate_group_hash": "00d239dcd929063fa22aaa3485de63b5"
               },
               {
-                "id": 5,
-                "name": "Johnny Doe",
-                "email": "john@example.com",
-                "phone": "+1987654321",
-                "address": "456 Oak Ave",
-                "similarity_score": 100
+                "id": 1363,
+                "company_name": "Company 362",
+                "email": "email362@test.com",
+                "phone_number": "123456780362",
+                "duplicate_group_hash": "00d239dcd929063fa22aaa3485de63b5"
+              }
+            ]
+          },
+          {
+            "hash": "0104df41c5385b2ca0ef7e65c6f82383",
+            "count": 2,
+            "clients": [
+              {
+                "id": 976,
+                "company_name": "Company 975",
+                "email": "email975@test.com",
+                "phone_number": "123456780975",
+                "duplicate_group_hash": "0104df41c5385b2ca0ef7e65c6f82383"
+              },
+              {
+                "id": 1976,
+                "company_name": "Company 975",
+                "email": "email975@test.com",
+                "phone_number": "123456780975",
+                "duplicate_group_hash": "0104df41c5385b2ca0ef7e65c6f82383"
               }
             ]
           }
-        ],
-        "total_duplicate_groups": 5,
-        "total_duplicate_clients": 12
+        ]
       }
     }
   ],
@@ -155,8 +268,12 @@
     "validation_error_422": {
       "message": "The given data was invalid.",
       "errors": {
-        "file": ["The file field is required."],
-        "email": ["The email must be a valid email address."]
+        "file": [
+          "The file field is required."
+        ],
+        "email": [
+          "The email must be a valid email address."
+        ]
       }
     },
     "not_found_404": {
