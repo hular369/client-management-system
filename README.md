@@ -25,6 +25,11 @@ A **production-ready Laravel + React** application for managing client data with
 
 ---
 
+### Scope of Improvements
+- No Authentication is implemented for now. In the next phase, Sanctum can be implemented as a token based authentication method (if required/recommended).
+
+---
+
 ## 🛠️ Technology Stack
 
 ### Backend
