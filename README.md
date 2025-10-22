@@ -63,6 +63,8 @@ A **production-ready Laravel + React** application for managing client data with
 - **Supervisor** (for managing queue workers)  
 - **Nginx/Apache** web server  
 
+--- 
+
 ### API documentation
 - api_doc.json file is in the root of the project, which can be studied to learn all about the API endpoints.
 
